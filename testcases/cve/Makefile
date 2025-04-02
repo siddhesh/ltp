@@ -24,4 +24,11 @@ endif
 
 cve-2015-3290:	CFLAGS += -pthread -fomit-frame-pointer
 
+# The test needs to clobber %rbp, which requires frame pointer omission.  Also
+# bump up the preferred stack boundary to ensure that the compiler manages to
+# omit the frame pointer even with AVX enabled.
+ifneq (,$(filter $(HOST_CPU),x86 x86_64))
+cve-2015-3290: CFLAGS += -mno-avx
+endif
+
 include $(top_srcdir)/include/mk/generic_leaf_target.mk
